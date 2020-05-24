@@ -1,0 +1,113 @@
+/** @page guidewin32 Installing %G3D on Windows
+
+The following sections give step-by-step instructions for installing
+the 8.00 version of %G3D on Windows XP, Vista, and 7.
+
+<p>For experienced Visual Studio developers, the short version of these instructions is simple:
+
+\htmlonly
+<ol>
+<li> Unzip <a
+href="http://prdownloads.sourceforge.net/g3d/G3D-8.00-win32.zip?download">G3D-8.00-win32.zip</a> and configure Visual Studio's Include and Library paths.
+<li> Set your G3DDATA environment variable to the G3D/data directory.
+<li> See <code><a href="../samples/starter">G3D\demos\starter</a></code> for a simple application framework.
+</ol>
+\endhtmlonly
+</p>
+
+
+<hr>
+@section vs9install Visual Studio 2008 (VC++ 9.0) Installation
+
+<p>
+\htmlonly
+Visual Studio 9 (officially known as Visual C++ 2008 Express Edition)
+is available as a free download from Microsoft at <a
+href="hhttp://www.microsoft.com/express/download/#webInstall">http://www.microsoft.com/express/download/#webInstall</a>.
+Note that there is also a profession
+edition of Visual Studio 2008 that can be purchased.  G3D is compatible with VC2005 and many previous editions, but not supported and you'll
+have to build your own copy of the library.  We recommend that you
+instead use the latest (free!) version of Visual Studio.
+\endhtmlonly
+</p>
+
+<hr>
+@section vs10install Visual Studio 2010 (VC++ 10.0) Notes
+
+G3D 8.00 was developed on Visual Studio 2008, and the precompiled binaries were compiled with it.  Microsoft
+recently released Visual Studio 2010.  We do not provide instructions for configuring that compiler, however
+it should work with the provided library binaries.
+
+The G3D source distribution includes VC10 project files to help you build G3D under that compiler if you 
+would like.  We do not explicitly support G3D 8.00 under VC10, but will answer questions posted to the 
+user forum about it.  G3D 9.00 (currently under development and available through Subversion) exclusively
+supports VC10 and later.
+
+<hr>
+@section g3dinstall G3D Installation
+\htmlonly
+<ol>
+<li> <p>
+
+Download <a
+href="http://prdownloads.sourceforge.net/g3d/G3D-8.00-win32.zip?download">G3D-8.00-win32.zip</a>
+and unzip it into a directory like <code>c:\libraries</code>. This
+will create the directories <code>c:\libraries\G3D</code>,
+<code>c:\libraries\G3D\html</code>, etc.
+
+</p>
+
+<li> <p>Run Visual Studio 2008</p>
+
+<li> <p>Click on the <b>Tools</b> menu and then select <b>Options</b>, as demonstrated in this image:
+
+<center><img src="vc9-tools-menu.png" border=0 align=top></center></p>
+
+<li> <p>In the tree control on the left of the <b>Options</b> dialog, expand the  <b>Projects and Solutions</b> item (refer to the Options Dialog image below).</p>
+
+<li> <p>Select <b>VC++ Directories</b> under <b>Projects and Solutions</b>.  The tab on the right will now display a list of directories for <b>Executable Files</b>.</p>
+
+<li> <p>From the drop-down list labelled <b>Show directories for</b>, which is in the upper-right of the <b>Options Dialog</b>, select <b>Include files</b>.</p>
+
+<li> <p>Double-click in the white space below the last listed directory
+in the central list box and type the full path to the G3D include
+directory, as demonstrated in the image below.  If you installed G3D to
+<code>c:\libraries</code>, this path is
+<code>c:\libraries\G3D\include</code>.
+
+<center><img src="vc9-options-dialog.png" border=0 align=top></center></p>
+
+<li> 
+ <p>Change the <b>Show directories for</b> drop-down list to <b>Library files</b>.
+ </p>
+
+<p>
+<li> <p>Double-click in the white space below the last listed directory
+in the central list box and type the full path to the G3D lib
+directory.  If you installed G3D to
+<code>c:\libraries</code>, this path is
+<code>c:\libraries\G3D\lib</code>.
+</p>
+
+<li><p>In the tree list on the left of the entire dialog, select TextEditor/Extensions.  Add each of the following extensions with the "Microsoft C++ Experience" by typing it into the text box and pressing "Add": "pix", "vrt", "geo", "cu", "any".  The completed dialog should look like:</p>
+<center><img src="vc9-extension-dialog.png" border=0 align=top></center></p>
+
+<li><p>Push <b>Ok</b> to close the <b>Options</b> dialog.</p>
+
+<li><p>Quit Visual Studio to ensure that your changes are saved.</p>
+<li><p>Set the G3DDATA environment variable to the directory containing the G3D data files (e.g., c:\G3D\data).  For instructions on setting environment variables
+for different versions of Windows, see:
+<ul>
+ <li> <a href="http://support.microsoft.com/kb/311843">Windows 2000</a>
+ <li> <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;310519">Windows XP</a>
+ <li> <a href="http://support.tabs3.com/main/R10463.htm">Windows Vista</a>
+ <li> <a href="http://www.itechtalk.com/thread3595.html">Windows 7</a>
+</ul>
+</p>
+</ol>
+
+See the <a href="guidenewwin32.html">instructions for creating a new project</a> on Windows for information about how to write your first G3D program,
+or explore the provided <a href="guidedemos.html">sample programs</a>.
+\endhtmlonly
+
+*/

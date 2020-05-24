@@ -1,0 +1,128 @@
+/** @mainpage 
+
+\htmlonly
+
+<table border=0 width=100% >
+<tr align=top >
+<td valign=top >
+<font size="4" face="Arial" >
+\endhtmlonly
+<ol start=1>
+<li><p>Installing %G3D
+\htmlonly
+<table width=250><tr><td width=10%></td><td width=45%><a class="el" href="guidewin32.html">Windows</a></td><td><a class="el" href="guideunix.html">Linux</a></td></tr><tr><td></td><td><a class="el" href="guideunix.html">OS X</a></td><td></td></tr></table>
+\endhtmlonly
+</p>
+
+<li> <p> Creating a Project
+\htmlonly
+<table width=250><tr><td width=10%></td><td width=45%><a class="el" href="guidenewwin32.html">Windows</a></td><td><a class="el" href="guidenewunix.html">Linux</a></td></tr><tr><td></td><td><a class="el" href="guidenewunix.html">OS X</a></td><td></td></tr></table>
+\endhtmlonly
+</p>
+
+<li> <p>Welcome to %G3D
+\htmlonly
+<font size="3" >
+\endhtmlonly
+<ol>
+  <li>  \link guideoverview %G3D Overview \endlink
+  <li>  \link guidenewuser New User Guide \endlink
+  <li>  \link guidedemos Sample Programs \endlink
+</ol>
+  \htmlonly
+</font>
+\endhtmlonly
+<p>
+
+<li> <p> Reference Documentation
+\htmlonly
+<font size="3" >
+\endhtmlonly
+  <ol>
+     <li> <a class="el" href="apiindex.html">APIs by Abstraction Level</a>
+     <li> <a class="el" href="topicindex.html">APIs by Task</a>
+     <li> <a class="el" href="annotated.html">All APIs</a>
+     <li> <a class="el" href="dataindex.html">Data</a></p>
+  </ol>
+  \htmlonly
+</font>
+\endhtmlonly
+</p>
+
+<li> <p> <a class="el" href="http://sourceforge.net/apps/mediawiki/g3d/index.php?title=Main_Page">Concept and Tip Documentation</a> (Wiki)</p>
+
+<li> <p> Web Resources
+  \htmlonly
+<font size="3" >
+\endhtmlonly
+<ol>
+  <li> <a class="el" href="http://g3d.sourceforge.net">Web Page</a> (new releases, gallery)</p>
+  <li> <a class="el" href="http://sourceforge.net/projects/g3d/">SourceForge Page</a> (older releases, issue tracker)</p>
+  <li> <a class="el" href="http://groups.google.com/group/g3d-users/topics">Support Forum</a>
+  <li> <a class="el" href="http://g3d.cvs.sourceforge.net/g3d/G3D/">Library Source Code</a>
+</ol>
+\htmlonly
+</font>
+\endhtmlonly
+</p>
+</ol>
+\htmlonly
+</font>
+</td>
+<td width=20 >
+</td>
+
+<td valign=top align=right>
+
+<img src="G3D.jpg">
+
+<table border=0 width=100%><tr><td width=50> </td><td>
+<font size="4" face="Arial" >
+<ol start=7>
+<li> <p> <a class="el" href="icompile-manual.html" >iCompile Manual</a> (Unix)</p>
+
+<li> <p> FAQs
+<table width=250>
+<tr><td width=10%></td><td><a class="el" href="http://sourceforge.net/apps/mediawiki/g3d/index.php?title=FAQ">General Questions</a></td><td></td></tr>
+<tr><td width=10%></td><td><a class="el" href="upgrade.html">Upgrading from 6.xx &rarr; 7.xx</a></td><td></td></tr>
+</table></p>
+
+<li> <p> About G3D
+<table width=250>
+<tr><td width=10%></td><td width=45%><a class="el" href="license.html">License</a></td><td></td></tr>
+<tr><td width=10%></td><td width=45%><a class="el" href="contributors.html">Credits</a></td><td></td></tr>
+<tr><td width=10%></td><td width=45%><a class="el" href="changelog.html">Change Log</a></td><td></td></tr>
+</table></p>
+</ol>
+</font>
+</td></tr>
+</table>
+</td>
+</tr>
+</table>
+<HR>
+The G3D 8.00 Development Team is:
+<blockquote>
+<b>Morgan McGuire</b>, Williams College
+<br><b>Corey Taylor</b>, Electronic Arts
+<br><b>Shawn Yarbrough</b>, weaponizedgames.com
+<br><b>Trevor O'Brien</b>, Brown University
+</blockquote>
+<HR>
+Manual and Library source code
+<br>Copyright 2000-2010, Morgan McGuire.
+<br>All rights reserved.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+\endhtmlonly
+
+*/
+

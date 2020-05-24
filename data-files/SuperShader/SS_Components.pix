@@ -1,0 +1,22 @@
+// -*- c++ -*-
+/**
+  @file SS_Components.pix
+  @author Morgan McGuire morgan@cs.williams.edu
+
+  For use with G3D::SuperShader.
+  Abstracts common code for reading the components
+  inside main()
+
+  @edited  2009-03-24
+  @created 2007-12-18
+ */
+
+#   if defined(SPECULARCONSTANT) || defined(SPECULARMAP)
+        // Eye vector
+        vec3 wsE = normalize(wsEyePos - wsPosition);
+        // or... (tangentToWorld * vec4(tsE, 0.0)).xyz;
+#   else
+        vec3 wsE = BLACK;
+#   endif
+/* end SS_Components.pix */
+

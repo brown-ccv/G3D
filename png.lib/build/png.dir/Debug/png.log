@@ -1,0 +1,80 @@
+﻿  Building Custom Rule F:/vrg3d-code/G3D/png.lib/CMakeLists.txt
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27038 for x64
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /I"F:\vrg3d-code\G3D\png.lib\.\include" /I"F:\vrg3d-code\G3D\png.lib\..\zlib.lib\include" /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"png.dir\Debug\\" /Fd"png.dir\Debug\png.pdb" /Gd /TC /errorReport:prompt "F:\vrg3d-code\G3D\png.lib\source\png.c" "F:\vrg3d-code\G3D\png.lib\source\pngerror.c" "F:\vrg3d-code\G3D\png.lib\source\pngget.c" "F:\vrg3d-code\G3D\png.lib\source\pngmem.c" "F:\vrg3d-code\G3D\png.lib\source\pngpread.c" "F:\vrg3d-code\G3D\png.lib\source\pngread.c" "F:\vrg3d-code\G3D\png.lib\source\pngrio.c" "F:\vrg3d-code\G3D\png.lib\source\pngrtran.c" "F:\vrg3d-code\G3D\png.lib\source\pngrutil.c" "F:\vrg3d-code\G3D\png.lib\source\pngset.c" "F:\vrg3d-code\G3D\png.lib\source\pngtrans.c" "F:\vrg3d-code\G3D\png.lib\source\pngwio.c" "F:\vrg3d-code\G3D\png.lib\source\pngwrite.c" "F:\vrg3d-code\G3D\png.lib\source\pngwtran.c" "F:\vrg3d-code\G3D\png.lib\source\pngwutil.c"
+  
+  png.c
+F:\vrg3d-code\G3D\png.lib\source\png.c(534): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+  pngerror.c
+  pngget.c
+  pngmem.c
+  pngpread.c
+F:\vrg3d-code\G3D\png.lib\source\pngpread.c(594): warning C4267: '-=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngpread.c(610): warning C4267: '-=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngpread.c(785): warning C4267: '-=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngpread.c(809): warning C4267: '-=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  pngread.c
+F:\vrg3d-code\G3D\png.lib\source\pngread.c(132): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngread.c(137): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+  pngrio.c
+  pngrtran.c
+F:\vrg3d-code\G3D\png.lib\source\pngrtran.c(1313): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngrtran.c(1689): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrtran.c(1703): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  pngrutil.c
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(211): warning C4267: '=': conversion from 'size_t' to 'uInt', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(221): warning C4267: '=': conversion from 'size_t' to 'uInt', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(224): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(233): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(276): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(374): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(1098): warning C4267: '=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(1127): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(1130): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(1227): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(2906): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(2921): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(2939): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(2964): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(3313): warning C4267: '=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(3321): warning C4267: '=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(3326): warning C4267: '=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngrutil.c(3341): warning C4267: '=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  pngset.c
+  pngtrans.c
+F:\vrg3d-code\G3D\png.lib\source\pngtrans.c(210): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngtrans.c(223): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngtrans.c(236): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  pngwio.c
+F:\vrg3d-code\G3D\png.lib\source\pngwio.c(56): warning C4267: '=': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  pngwrite.c
+F:\vrg3d-code\G3D\png.lib\source\pngwrite.c(450): warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\time.h(496): note: see declaration of 'gmtime'
+F:\vrg3d-code\G3D\png.lib\source\pngwrite.c(546): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngwrite.c(551): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+  pngwtran.c
+F:\vrg3d-code\G3D\png.lib\source\pngwtran.c(257): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  pngwutil.c
+F:\vrg3d-code\G3D\png.lib\source\pngwutil.c(218): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+F:\vrg3d-code\G3D\png.lib\source\pngwutil.c(226): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngwutil.c(1259): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngwutil.c(1621): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngwutil.c(1623): warning C4996: '_snprintf': This function or variable may be unsafe. Consider using _snprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1961): note: see declaration of '_snprintf'
+F:\vrg3d-code\G3D\png.lib\source\pngwutil.c(2106): warning C4267: 'initializing': conversion from 'size_t' to 'png_uint_32', possible loss of data
+  Generating Code...
+  png.vcxproj -> F:\vrg3d-code\G3D\png.lib\build\Debug\png.lib

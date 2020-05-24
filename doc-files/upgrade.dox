@@ -1,0 +1,295 @@
+/** @page upgrade Upgrade Guide
+
+Notes for upgrading from G3D 6.xx to 7.xx:
+
+<hr noshade>
+<p><b>New Widget/GEvent delivery</b></p>
+<p>
+The event system now maintains a ranking of all GModules.  The module at the top of the ranking may optionally have "focus", which is a useful concept for 2D
+gui elements.  Modules are rendered in the opposite of the event delivery order, so that for 2D rendering the highest priority module appears on top.
+The 6.xx priority system for event delivery has been removed entirely.
+</p>
+
+<hr noshade>
+<p><b>\#include structure changes</b></p>
+<p>
+Most programs should now have <code>\#include &lt;G3D/G3DAll.h&gt;</code>.  This is because the directory structure has changed for header files from 6.xx.
+The goal of the change was to bring G3D into line with other OS X and Linux libraries and to help with integration with 3rd party libraries like
+ODE.  This new structure should allow easier porting of applications between operating systems.
+The new directory structure for headers is:
+
+<pre>
+<b>include</b>
+   <b>G3D/</b>
+     G3D.h
+     G3DAll.h
+   <b>GLG3D/</b>
+     GLG3D.h
+     <b>GL/</b>
+       gl.h
+   zlib.h
+   png.h
+   jpeglib.h
+</pre>
+
+
+</p>
+
+<hr noshade>
+<p><b>WinMain</b></p>
+<p>
+Win32 programs must call the macro <b><code>G3D_START_AT_MAIN();</code></b> at top-level (e.g., right before defining your <code>main</code> function), if they do not define WinMain themselves.  G3D_START_AT_MAIN() does nothing on other programs, so it is safe to always add this to the file
+in which you defined <code>main</code>.
+</p>
+
+<hr noshade>
+<p><b>GApp changes</b></p>
+<p>
+A number of changes have been made to GApp.  Most notable - onGraphics now takes three arguments: 
+<code>onGraphics(RenderDevice* rd, Array<SurfaceRef> &posed3D, Array<Surface2DRef> &posed2D)</code>.
+<br>Similarly important is the removal of GApplet support.  Programs that were defined with a parallel structure using
+GApplets should be restructured.  See the chopper network demo for an example of how to set up an Applet-like structure 
+for programs where you may be having trouble making the switch.
+<br>DebugController and DebugCamera have been renamed DefaultController and DefaultCamera.
+<br>A number of fields that defined debug behavior are more easily accessible, as part of the GApp class; for 
+example, showRenderingStats and showDebugText.
+<br>Other behaviors are definable in a similar fashion, such as 
+escapeKeyAction, which is an enumerated type (Action) and can be set to Action::ACTION_NONE, Action::ACTION_QUIT, 
+or Action::ACTION_SHOW_CONSOLE.
+</p>
+
+<hr noshade>
+<p><b>SDLK_ is gone</b></p>
+<p>
+G3D 7.00 replaced SDL event types with G3D event types.  The change affecting the most users is that SDLK_* is now GKey::*.
+Other changes include KMOD_* to GKeyMod::*.
+</p>
+
+<hr noshade>
+<p><b>Accessors (functions with "get" in the name)</b></p>
+<p>
+All 6.xx functions with "get" in the name that accepted no arguments were renamed to just 
+the part of the name after "get".  Example: G3D::CoordinateFrame::getLookVector is now G3D::CoordinateFrame::lookVector
+You will see errors like:
+<code>error C2039: 'getLookVector' : is not a member of 'CoordinateFrame'</code>
+</p>
+
+
+<hr noshade>
+<p><b>GApp::main now returns int</b></p>
+<p>
+You will see errors like the following, indicating that you need to upgrade your code:
+<code>error C2555: 'App::main': overriding virtual function return type differs and is not covariant from 'G3D::GApp::main'</code>
+</p>
+
+
+<hr noshade>
+<p><b>Can't find X11/Xlib.h</b></p>
+<p>
+Delete your ~/.icompile file; the newest version of iCompile (0.5.0) is not compatible with
+the old files.
+</p>
+
+<hr noshade>
+<p><b>G3D::GCamera::project now returns the depth buffer value and not -1/z in the z-component.</b></p>
+
+<hr noshade>
+<p><b>ALL CAPS Vector, Color, Matrix constants</b></p>
+<p>
+The all-caps constants have been renamed to lower-case static functions.
+Example: G3D::Color3::RED is now G3D::Color3::red().
+You will see errors like:
+<code>error C2039: 'WHITE' : is not a member of 'Color3'</code>
+</p>
+
+
+<hr noshade>
+<p><b>G3D::NetMessage is gone</b></p>
+<p>
+G3D::ReliableConduit::send, G3D::ReliableConduit::receive, G3D::LightweightConduit::send, and
+G3D::LightweightConduit::receive now accept any class that has <code>serialize</code> and <code>deserialize</code>
+methods.  There is no need for a NetMessage base class.  To replace this now unnecessary base class, you can add 
+the following to your program:
+<br><code>namespace G3D { class NetMessage { public: virtual ~NetMessage(); };}</code>
+</p>
+
+
+<hr noshade>
+<p><b>Network send with no arguments is gone</b></p>
+<p>
+You must now send at least a message type; you cannot send a message with no content.
+</p>
+
+
+<hr noshade>
+<p><b>GApplet methods not called/compile time errors</b></p>
+<p>
+The names of the GApplet methods changed, e.g., from "doGraphics" to "onGraphics".  The old method names have been
+configured to create compile time errors to help you catch bugs.  These will appear as:
+<br>
+<code>error C2555: 'Browse::doGraphics' : overriding virtual function differs from 'G3D::GApplet::doGraphics' only by return type or calling convention</code>
+</p>
+
+
+
+<hr noshade>
+<p>
+<p><b>SDL event codes replaced with G3D ones</b></p>
+<p>
+For example, SDL_QUIT is now GEventType::QUIT.  This may produce errors in your code like:
+<br>
+<code>
+error C2065: 'SDL_QUIT' : undeclared identifier</code>
+</p>
+
+
+<hr noshade>
+<p><b>Renamings</b></p>
+<p>
+<table>
+<tr><td><B>6.xx</b></td><td><b>7.xx</b></td></tr>
+<tr><td>G3D::crc32</td><td>G3D::Crypto::crc32</td></tr>
+<tr><td>G3D::CFont</td><td>G3D::GFont</td></tr>
+<tr><td>G3D::CImage</td><td>G3D::GImage</td></tr>
+<tr><td>G3D::CImage</td><td>G3D::GImage</td></tr>
+<tr><td>G3D::System::getTick</td><td>G3D::System::time</td></tr>
+<tr><td>G3D::System::getLocalTime</td><td>G3D::System::getLocalTime</td></tr>
+<tr><td>G3D::Color3::WHITE</td><td>G3D::Color3::white</td></tr>
+<tr><td>G3D::Vector3::ZERO</td><td>G3D::Vector3::zero</td></tr>
+<tr><td>G3D::Vector3::UNIT_Y</td><td>G3D::Vector3::unitY</td></tr>
+<tr><td>G3D::random</td><td>G3D::uniformRandom()</td></tr>
+<tr><td>G3D_PI</td><td>G3D::pi()</td></tr>
+<tr><td>G3D_HALF_PI</td><td>G3D::halfPi()</td></tr>
+<tr><td>G3D_TWO_PI</td><td>G3D::twoPi()</td></tr>
+<tr><td>G3D::RenderDevice::supportsImageFormat</td><td>GLCaps::supports</td></tr>
+<tr><td>G3D::FirstPersonManipulator::doSimulation</td><td>G3D::FirstPersonManipulator::onSimulation</td></tr>
+<tr><td>G3D::GApplet::doGraphics</td><td>G3D::GApplet::onGraphics</td></tr>
+<tr><td>G3D::GApplet::doNetwork</td><td>G3D::GApplet::onNetwork</td></tr>
+<tr><td>G3D::GApplet::doLogic</td><td>G3D::GApplet::onLogic</td></tr>
+<tr><td>G3D::GApplet::cleanup</td><td>G3D::GApplet::onCleanup</td></tr>
+<tr><td>G3D::computeNormalMap</td><td>G3D::GImage::computeNormalMap</td></tr>
+<tr><td>G3D::Box::getCorner</td><td>G3D::Box::corner</td></tr>
+<tr><td>G3D::Sky::create</td><td>G3D::Sky::fromFile</td></tr>
+<tr><td>G3D::UserInput::appHasFocus</td><td>G3D::OSWindow::hasFocus</td></tr>
+<tr><td>G3D::SurfaceWrapper</td><td>contrib/SurfaceWrapper</td></tr>
+<tr><td>G3D::TextureManager</td><td>contrib/TextureManager</td></tr>
+<tr><td>G3D::GAppSettings</td><td>G3D::GApp::Settings</td></tr>
+<tr><td>G3D::Texture::Parameters</td><td>G3D::Texture::Settings</td></tr>
+<tr><td>G3D::Texture::maxAnisotropy</td><td>G3D::Texture::settings().maxAnisotropy</td></tr>
+<tr><td>G3D::Texture::getInterpolateMode</td><td>G3D::Texture::settings().interpolateMode</td></tr>
+<tr><td>G3D::Texture::getWrapMode</td><td>G3D::Texture::settings().wrapMode</td></tr>
+<tr><td>G3D::Texture::wrapMode</td><td>G3D::Texture::settings().wrapMode</td></tr>
+<tr><td>G3D::Texture::parameters</td><td>G3D::Texture::settings</td></tr>
+<tr><td>G3D::GWindowSettings</td><td>G3D::OSWindow::Settings</td></tr>
+<tr><td>G3D::Texture::NO_INTERPOLATION</td><td>G3D::Texture::NEAREST_NO_MIPMAP</td></tr>
+<tr><td>G3D::MD2Model::create</td><td>G3D::MD2Model::fromFile</td></tr>
+<tr><td>G3D::MeshAlg::Edge::broken</td><td>G3D::MeshAlg::Edge::boundary</td></tr>
+<tr><td>G3D::readFileAsString</td><td>G3D::readWholeFile</td></tr>
+<tr><td>G3D::writeStringToFile</td><td>G3D::writeWholeFile (note: argument order changed!)</td></tr>
+<tr><td>G3D::RenderDevice::setCaption</td><td>G3D::OSWindow::setCaption</td></tr>
+<tr><td>SDLK_*</td><td>G3D::GKey::*</td></td></tr>
+<tr><td>G3D::UserInput::keyCodeToString</td><td>G3D::GKey::toString</td></td></tr>
+<tr><td>G3D::UserInput::stringToKeyCode</td><td>G3D::GKey::fromString</td></td></tr>
+<tr><td>G3D::SkyParameters</td><td>G3D::SkyParameters</td></td></tr>
+<tr><td>G3D::Texture::texelWidth</td><td>G3D::Texture::width</td></td></tr>
+<tr><td>G3D::Texture::texelHeight</td><td>G3D::Texture::height</td></td></tr>
+<tr><td>G3D::Texture::WrapMode</td><td>G3D::WrapMode</td></tr>
+<tr><td>G3D::Texture::TRANSPARENT_BORDER</td><td>G3D::WrapMode::ZERO</td></tr>
+<tr><td>SDL_<i>eventname</i></td><td>G3D::GEventType::<i>eventname</i></td></tr>
+<tr><td>GApp::debugCamera</td><td>GApp::defaultCamera</td></tr>
+<tr><td>GApp::debugController</td><td>GApp::defaultController</td></tr>
+<tr><td>OSWindow::pollEvent</td><td>OSWindow::pollOSEvent</td></tr>
+<tr><td>G3D::Widget</td><td>G3D::Widget</td></tr>
+<tr><td>G3D::GModuleManager</td><td>G3D::WidgetManager</td></tr>
+<tr><td>G3D::GApp::addWidget</td><td>G3D::GApp::addWidget</td></tr>
+<tr><td>G3D::GApp::removeWidget</td><td>G3D::GApp::removeWidget</td></tr>
+<tr><td>G3D::GFont::get2DStringBounds</td><td>G3D::GFont::bounds</td></tr>
+<tr><td>G3D::GModule::getSurface</td><td>G3D::Widget::onPose</td></tr>
+<tr><td>G3D::GApp::getSurface</td><td>G3D::GApp::onPose</td></tr>
+<tr><td>G3D::NetworkDevice::createListener</td><td>G3D::NetListener::create</td></tr>
+<tr><td>G3D::NetworkDevice::createLightweightConduit</td><td>G3D::LightweightConduit::create</td></tr>
+<tr><td>G3D::NetworkDevice::createReliableConduit</td><td>G3D::ReliableConduit::create</td></tr>
+<tr><td>G3D::GApp::debugPrintf</td><td>G3D::screenPrintf</td></tr>
+<tr><td>G3D::debugPrintf</td><td>G3D::consolePrintf</td></tr>
+<tr><td>G3D::MD2Model::Pose::doSimulation</td><td>G3D::MD2Model::Pose::onSimulation</td></tr>
+</table>
+</p>
+
+<hr noshade>
+<p><b>Switched from MBCS to UNICODE on Win32</b></p>
+<p>
+The default wide character set for Visual Studio 2005 is Unicode (instead of multi-byte, 
+which is what previous versions used.)
+
+The G3D source code now compiles under either character set, however the precompiled binaries
+distributed for Windows are now Unicode binaries.  This eliminates the project configuration 
+step when users are creating new projects on Windows since G3D matches the default.
+
+However, this means that pre-existing visual studio projects will likely encounter string errors at link time.  
+If they do, in the Visual Studio IDE go to Projects...Property Pages and on the Configuration Properties... General 
+tab, change Character Set to be "Use Unicode Character Set."
+</p>
+
+
+
+<hr noshade>
+<p><b>GApp::debugController is now a reference</b></p>
+<p>
+This means that <code>app->debugController.setActive</code> etc. calls are now <code>app->debugController->setActive</code>.
+</p>
+
+<hr noshade>
+<p><b>c:\\program files\\microsoft visual studio\\vc98\\include\\winsock2.h(99) : error C2011: 'fd_set' : 'struct' type redefinition</b></p>
+<p>
+G3D (since 6.09) uses WinSock 2.0 on Windows.  Unfortunately, this is incompatible with WinSock 1.1, which is included by windows.h.
+So you have to EITHER:
+
+<ul>
+<li> always include graphics3d.h before windows.h (note that graphics3d.h includes windows.h, so you don't need your own include
+for windows.h) OR
+<li> edit g3d/NetAddress.h <code>\#define G3D_WINSOCK_MAJOR_VERSION 2 / \#define G3D_WINSOCK_MINOR_VERSION 0</code> to choose version 1.1 OR
+<li> Change your Windows include to 
+  <pre>
+   \#define _WINSOCKAPI_
+   \#include <windows.h>
+   \#undef _WINSOCKAPI_
+  </pre>
+</ul>
+
+</p>
+
+
+<hr noshade>
+<p><b>PhysicsFrame::integrate is gone</b></p>
+<p>
+These functions have been removed to avoid ambiguity.  The old implementations were:
+<pre>
+
+PhysicsFrame PhysicsFrame::integrate(
+    float                   t,
+    const PhysicsFrame&     dx) {
+
+    PhysicsFrame result;
+
+    result.translation = translation + t * dx.translation;
+    result.rotation    = rotation * dx.rotation.pow(t); 
+
+    return result;
+}
+
+
+PhysicsFrame PhysicsFrame::integrate(
+    float                   t,
+    const PhysicsFrame&     dx,
+    const PhysicsFrame&     ddx) {
+
+    PhysicsFrame result;
+    result.translation = translation + t * dx.translation + t * t * ddx.translation;
+    result.rotation    = rotation * dx.rotation.pow(t) * ddx.rotation.pow(t * t);
+
+    return result;
+}
+</pre>
+</p>
+
+*/

@@ -1,0 +1,57 @@
+﻿  Building Custom Rule F:/vrg3d-code/G3D/zlib.lib/CMakeLists.txt
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27038 for x64
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /I"F:\vrg3d-code\G3D\zlib.lib\.\source" /I"F:\vrg3d-code\G3D\zlib.lib\.\include" /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"zlib.dir\Debug\\" /Fd"zlib.dir\Debug\zlib.pdb" /Gd /TC /errorReport:prompt "F:\vrg3d-code\G3D\zlib.lib\source\adler32.c" "F:\vrg3d-code\G3D\zlib.lib\source\compress.c" "F:\vrg3d-code\G3D\zlib.lib\source\crc32.c" "F:\vrg3d-code\G3D\zlib.lib\source\deflate.c" "F:\vrg3d-code\G3D\zlib.lib\source\gzclose.c" "F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c" "F:\vrg3d-code\G3D\zlib.lib\source\gzread.c" "F:\vrg3d-code\G3D\zlib.lib\source\gzwrite.c" "F:\vrg3d-code\G3D\zlib.lib\source\infback.c" "F:\vrg3d-code\G3D\zlib.lib\source\inffast.c" "F:\vrg3d-code\G3D\zlib.lib\source\inflate.c" "F:\vrg3d-code\G3D\zlib.lib\source\inftrees.c" "F:\vrg3d-code\G3D\zlib.lib\source\trees.c" "F:\vrg3d-code\G3D\zlib.lib\source\uncompr.c" "F:\vrg3d-code\G3D\zlib.lib\source\zutil.c"
+  
+  adler32.c
+  compress.c
+  crc32.c
+  deflate.c
+  gzclose.c
+  gzlib.c
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(156): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): note: see declaration of 'strcpy'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(160): warning C4996: 'open': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _open. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(516): note: see declaration of 'open'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(184): warning C4996: 'lseek': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _lseek. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(503): note: see declaration of 'lseek'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(221): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): note: see declaration of 'sprintf'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(268): warning C4996: 'lseek': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _lseek. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(503): note: see declaration of 'lseek'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(309): warning C4996: 'lseek': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _lseek. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(503): note: see declaration of 'lseek'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(404): warning C4996: 'lseek': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _lseek. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(503): note: see declaration of 'lseek'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(514): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): note: see declaration of 'strcpy'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(515): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(90): note: see declaration of 'strcat'
+F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c(516): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(90): note: see declaration of 'strcat'
+  gzread.c
+F:\vrg3d-code\G3D\zlib.lib\source\gzread.c(31): warning C4996: 'read': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _read. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(523): note: see declaration of 'read'
+F:\vrg3d-code\G3D\zlib.lib\source\gzread.c(37): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(182): note: see declaration of 'strerror'
+F:\vrg3d-code\G3D\zlib.lib\source\gzread.c(650): warning C4996: 'close': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _close. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(459): note: see declaration of 'close'
+  gzwrite.c
+F:\vrg3d-code\G3D\zlib.lib\source\gzwrite.c(79): warning C4996: 'write': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _write. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(558): note: see declaration of 'write'
+F:\vrg3d-code\G3D\zlib.lib\source\gzwrite.c(81): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(182): note: see declaration of 'strerror'
+F:\vrg3d-code\G3D\zlib.lib\source\gzwrite.c(333): warning C4996: '_vsnprintf': This function or variable may be unsafe. Consider using _vsnprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1400): note: see declaration of '_vsnprintf'
+F:\vrg3d-code\G3D\zlib.lib\source\gzwrite.c(528): warning C4996: 'close': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _close. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_io.h(459): note: see declaration of 'close'
+  infback.c
+  inffast.c
+  inflate.c
+  inftrees.c
+  trees.c
+  uncompr.c
+  zutil.c
+  Generating Code...
+  zlib.vcxproj -> F:\vrg3d-code\G3D\zlib.lib\build\Debug\zlib.lib

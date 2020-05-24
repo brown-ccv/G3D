@@ -1,0 +1,8 @@
+
+varying vec3 normal;
+
+void main() {
+    // Leave vertices in object space
+    gl_Position = gl_Vertex;
+    normal = gl_Normal;
+}

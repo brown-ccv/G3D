@@ -1,0 +1,1013 @@
+/**
+  @file GLCaps.cpp
+
+  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+  @created 2004-03-28
+  @edited  2009-11-10
+*/
+
+#include "G3D/TextOutput.h"
+#include "G3D/RegistryUtil.h"
+#include "GLG3D/GLCaps.h"
+#include "GLG3D/OSWindow.h"
+#include "GLG3D/glcalls.h"
+#include "G3D/ImageFormat.h"
+#include "GLG3D/getOpenGLState.h"
+#include "GLG3D/RenderDevice.h"
+#include "G3D/NetworkDevice.h"
+#include "G3D/Log.h"
+
+#include <sstream>
+
+namespace G3D {
+
+// Global init flags for GLCaps.  Because this is an integer constant (equal to zero),
+// we can safely assume that it will be initialized before this translation unit is
+// entered.
+bool GLCaps::m_loadedExtensions = false;
+bool GLCaps::m_initialized = false;
+bool GLCaps::m_checkedForBugs = false;
+bool GLCaps::m_hasGLMajorVersion2 = false;
+bool GLCaps::m_hasGLMajorVersion3 = false;
+
+int GLCaps::m_numTextureCoords = 0;
+int GLCaps::m_numTextures = 0;
+int GLCaps::m_numTextureUnits = 0;
+
+bool GLCaps::bug_glMultiTexCoord3fvARB = false;
+bool GLCaps::bug_normalMapTexGen = false;
+bool GLCaps::bug_redBlueMipmapSwap = false;
+bool GLCaps::bug_mipmapGeneration = false;
+bool GLCaps::bug_slowVBO = false;
+
+int GLCaps::m_maxTextureSize = 0;
+int GLCaps::m_maxCubeMapSize = 0;
+
+float GLCaps::m_glslVersion = 0.0f;
+
+int GLCaps::count = 0;
+
+/**
+ Dummy function to which unloaded extensions can be set.
+ */
+static void __stdcall glIgnore(GLenum e) {
+    (void)e;
+}
+
+/** Cache of values supplied to supportsImageFormat.
+    Works on pointers since there is no way for users
+    to construct their own ImageFormats.
+ */
+static Table<const ImageFormat*, bool>& _supportedImageFormat() {
+    static Table<const ImageFormat*, bool> cache;
+    return cache;
+}
+
+
+static Table<const ImageFormat*, bool>& _supportedRenderBufferFormat() {
+    static Table<const ImageFormat*, bool> cache;
+    return cache;
+}
+
+Set<std::string> GLCaps::extensionSet;
+
+GLCaps::Vendor GLCaps::computeVendor() {
+    static bool initialized = false;
+    static Vendor v;
+
+    if (! initialized) {
+        std::string s = vendor();
+        std::string _glVersion = (char*)glGetString(GL_VERSION);
+
+        if (s == "ATI Technologies Inc.") {
+            v = ATI;
+        } else if (s == "NVIDIA Corporation") {
+            v = NVIDIA;
+        } else if ((s == "Brian Paul") || (s == "Mesa project: www.mesa3d.org") || 
+                   (_glVersion.find("Mesa ") != std::string::npos)) {
+            v = MESA;
+        } else {
+            v = ARB;
+        }
+        initialized = true;
+    }
+
+    return v;
+}
+
+GLCaps::Vendor GLCaps::enumVendor() {
+    return computeVendor();
+}
+
+
+#ifdef G3D_WIN32
+/**
+ Used by the Windows version of getDriverVersion().
+ @cite Based on code by Ted Peck tpeck@roundwave.com http://www.codeproject.com/dll/ShowVer.asp
+ */
+struct VS_VERSIONINFO { 
+    WORD                wLength; 
+    WORD                wValueLength; 
+    WORD                wType; 
+    WCHAR               szKey[1]; 
+    WORD                Padding1[1]; 
+    VS_FIXEDFILEINFO    Value; 
+    WORD                Padding2[1]; 
+    WORD                Children[1]; 
+};
+#endif
+
+std::string GLCaps::getDriverVersion() {
+    if (computeVendor() == MESA) {
+        // Mesa includes the driver version in the renderer version
+        // e.g., "1.5 Mesa 6.4.2"
+        
+        static std::string _glVersion = (char*)glGetString(GL_VERSION);
+        int i = _glVersion.rfind(' ');
+        if (i == (int)std::string::npos) {
+            return "Unknown (bad MESA driver string)";
+        } else {
+            return _glVersion.substr(i + 1, _glVersion.length() - i);
+        }
+    }
+    
+#ifdef G3D_WIN32
+ 
+    // locate the driver on Windows and get the version
+    // this systems expects Windows 2000/XP/Vista
+    std::string videoDriverKey;
+
+    bool canCheckVideoDevice = RegistryUtil::keyExists("HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\VIDEO");
+
+    if (canCheckVideoDevice) {
+
+        // find the driver expected to load
+        std::string videoDeviceKey = "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\VIDEO";
+        std::string videoDeviceValue = "\\Device\\Video";
+        int videoDeviceNum = 0;
+
+        while (RegistryUtil::valueExists(videoDeviceKey, format("%s%d", videoDeviceValue.c_str(), videoDeviceNum))) {
+            ++videoDeviceNum;
+        }
+
+        // find the key where the installed driver lives
+        std::string installedDriversKey;
+        RegistryUtil::readString(videoDeviceKey, format("%s%d", videoDeviceValue.c_str(), videoDeviceNum - 1), installedDriversKey);
+
+        // find and remove the "\Registry\Machine\" part of the key
+        int subKeyIndex = installedDriversKey.find('\\', 1);
+        subKeyIndex = installedDriversKey.find('\\', subKeyIndex + 1);
+
+        installedDriversKey.erase(0, subKeyIndex);
+
+        // read the list of driver files this display driver installed/loads
+        // this is a multi-string value, but we only care about the first entry so reading one string is fine
+        
+        std::string videoDrivers;
+        RegistryUtil::readString("HKEY_LOCAL_MACHINE" + installedDriversKey, "InstalledDisplayDrivers", videoDrivers);
+
+        if (videoDrivers.find(',', 0) != std::string::npos) {
+            videoDrivers = videoDrivers.substr(0, videoDrivers.find(',', 0));
+        }
+
+        char systemDirectory[512] = "";
+        GetSystemDirectoryA(systemDirectory, sizeof(systemDirectory));
+
+        std::string driverFileName = format("%s\\%s.dll", systemDirectory, videoDrivers.c_str());
+
+        DWORD dummy;
+        int size = GetFileVersionInfoSizeA((LPCSTR)driverFileName.c_str(), &dummy);
+        if (size == 0) {
+            return "Unknown (Can't find driver)";
+        }
+
+        void* buffer = new uint8[size];
+
+        if (GetFileVersionInfoA((LPCSTR)driverFileName.c_str(), 0, size, buffer) == 0) {
+            delete[] (uint8*)buffer;
+            return "Unknown (Can't find driver)";
+        }
+
+	    // Interpret the VS_VERSIONINFO header pseudo-struct
+	    VS_VERSIONINFO* pVS = (VS_VERSIONINFO*)buffer;
+        debugAssert(! wcscmp(pVS->szKey, L"VS_VERSION_INFO"));
+
+	    uint8* pVt = (uint8*) &pVS->szKey[wcslen(pVS->szKey) + 1];
+
+        #define roundoffs(a,b,r)	(((uint8*)(b) - (uint8*)(a) + ((r) - 1)) & ~((r) - 1))
+        #define roundpos(b, a, r)	(((uint8*)(a)) + roundoffs(a, b, r))
+
+	    VS_FIXEDFILEINFO* pValue = (VS_FIXEDFILEINFO*) roundpos(pVt, pVS, 4);
+
+        #undef roundoffs
+        #undef roundpos
+
+        std::string result = "Unknown (Can't find driver)";
+
+	    if (pVS->wValueLength) {
+	        result = format("%d.%d.%d.%d",
+                pValue->dwProductVersionMS >> 16,
+                pValue->dwProductVersionMS & 0xFFFF,
+	            pValue->dwProductVersionLS >> 16,
+                pValue->dwProductVersionLS & 0xFFFF);
+        }
+
+        delete[] (uint8*)buffer;
+
+        return result;
+
+    } else {
+        return "Unknown (Can't find driver)";
+    }
+
+    #else
+        return "Unknown";
+    #endif
+}
+
+void GLCaps::init() {
+    debugAssertGLOk();
+    loadExtensions(Log::common());
+    debugAssertGLOk();
+
+    // Remove all pending errors
+    while (glGetError() != GL_NONE);
+
+    if (glGetString(GL_SHADING_LANGUAGE_VERSION) && (glGetError() != GL_NONE)) { 
+        sscanf((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION), "%f", &m_glslVersion);
+    } else {
+        m_glslVersion = 0;
+    }
+    // Remove all errors generated by glGetString
+    while (glGetError() != GL_NONE);
+    debugAssertGLOk();
+
+    checkAllBugs();
+    glClearColor(1,1,1,1);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+// We're going to need exactly the same code for each of 
+// several extensions.
+#define DECLARE_EXT(extname)    bool GLCaps::_supports_##extname = false; 
+    DECLARE_EXT(GL_ARB_texture_float);
+    DECLARE_EXT(GL_ARB_texture_non_power_of_two);
+    DECLARE_EXT(GL_EXT_texture_rectangle);
+    DECLARE_EXT(GL_ARB_vertex_program);
+    DECLARE_EXT(GL_NV_vertex_program2);
+    DECLARE_EXT(GL_ARB_vertex_buffer_object);
+    DECLARE_EXT(GL_ARB_fragment_program);
+    DECLARE_EXT(GL_ARB_multitexture);
+    DECLARE_EXT(GL_EXT_texture_edge_clamp);
+    DECLARE_EXT(GL_ARB_texture_border_clamp);
+    DECLARE_EXT(GL_EXT_texture3D);
+    DECLARE_EXT(GL_EXT_stencil_wrap);
+    DECLARE_EXT(GL_EXT_stencil_two_side);
+    DECLARE_EXT(GL_ATI_separate_stencil);    
+    DECLARE_EXT(GL_EXT_texture_compression_s3tc);
+    DECLARE_EXT(GL_EXT_texture_cube_map);
+    DECLARE_EXT(GL_EXT_separate_specular_color);
+    DECLARE_EXT(GL_ARB_shadow);
+    DECLARE_EXT(GL_ARB_shader_objects);
+    DECLARE_EXT(GL_ARB_shading_language_100);
+    DECLARE_EXT(GL_ARB_fragment_shader);
+    DECLARE_EXT(GL_ARB_vertex_shader);
+    DECLARE_EXT(GL_EXT_geometry_shader4);
+    DECLARE_EXT(GL_EXT_framebuffer_object);
+    DECLARE_EXT(GL_ARB_framebuffer_object);
+    DECLARE_EXT(GL_ARB_framebuffer_sRGB);
+    DECLARE_EXT(GL_SGIS_generate_mipmap);
+	DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+#undef DECLARE_EXT
+
+
+void GLCaps::loadExtensions(Log* debugLog) {
+    // This is here to prevent a spurrious warning under gcc
+    glIgnore(0);
+
+    debugAssert(glGetString(GL_VENDOR) != NULL);
+
+    if (m_loadedExtensions) {
+        return;
+    } else {
+        m_loadedExtensions = true;
+    }
+
+    alwaysAssertM(! m_initialized, "Internal error.");
+
+    // Require an OpenGL context to continue
+    alwaysAssertM(glGetCurrentContext(), "Unable to load OpenGL extensions without a current context.");
+
+    // Initialize statically cached strings
+    vendor();
+    renderer();
+    glVersion();
+    driverVersion();
+
+    // Initialize cached GL major version pulled from glVersion() for extensions made into 2.0/3.0 core
+    const std::string glver = glVersion();
+    m_hasGLMajorVersion2 = beginsWith(glver, "2.");
+
+    m_hasGLMajorVersion3 = beginsWith(glver, "3.");
+
+    // Turn on OpenGL 3.0
+    glewExperimental = GL_TRUE;
+
+    GLenum err = glewInit();
+    alwaysAssertM(err == GLEW_OK, format("Error Initializing OpenGL Extensions (GLEW): %s\n", glewGetErrorString(err)));
+
+    std::istringstream extensions;
+    std::string extStringCopy = (char*)glGetString(GL_EXTENSIONS);
+    extensions.str(extStringCopy.c_str());
+    {
+        // Parse the extensions into the supported set
+        std::string s;
+        while (extensions >> s) {
+            extensionSet.insert(s);
+        }
+
+        // We're going to need exactly the same code for each of 
+        // several extensions.
+#       define DECLARE_EXT(extname) _supports_##extname = supports(#extname)
+#       define DECLARE_EXT_GL2(extname) _supports_##extname = (supports(#extname) || m_hasGLMajorVersion2)
+#       define DECLARE_EXT_GL3(extname) _supports_##extname = (supports(#extname) || m_hasGLMajorVersion3)
+            DECLARE_EXT(GL_ARB_texture_float);
+            DECLARE_EXT_GL2(GL_ARB_texture_non_power_of_two);
+            DECLARE_EXT(GL_EXT_texture_rectangle);
+            DECLARE_EXT(GL_ARB_vertex_program);
+            DECLARE_EXT(GL_NV_vertex_program2);
+            DECLARE_EXT(GL_ARB_vertex_buffer_object);
+            DECLARE_EXT(GL_EXT_texture_edge_clamp);
+            DECLARE_EXT_GL2(GL_ARB_texture_border_clamp);
+            DECLARE_EXT(GL_EXT_texture3D);
+            DECLARE_EXT_GL2(GL_ARB_fragment_program);
+            DECLARE_EXT_GL2(GL_ARB_multitexture);
+            DECLARE_EXT_GL2(GL_EXT_separate_specular_color);
+            DECLARE_EXT(GL_EXT_stencil_wrap);
+            DECLARE_EXT(GL_EXT_stencil_two_side);
+            DECLARE_EXT(GL_ATI_separate_stencil);            
+            DECLARE_EXT(GL_EXT_texture_compression_s3tc);
+            DECLARE_EXT(GL_EXT_texture_cube_map);
+            DECLARE_EXT_GL2(GL_ARB_shadow);
+            DECLARE_EXT_GL2(GL_ARB_shader_objects);
+            DECLARE_EXT_GL2(GL_ARB_shading_language_100);
+            DECLARE_EXT(GL_ARB_fragment_shader);
+            DECLARE_EXT(GL_ARB_vertex_shader);
+            DECLARE_EXT(GL_EXT_geometry_shader4);
+            DECLARE_EXT_GL2(GL_EXT_framebuffer_object);
+            DECLARE_EXT_GL3(GL_ARB_framebuffer_object);
+            DECLARE_EXT_GL3(GL_ARB_framebuffer_sRGB);
+            DECLARE_EXT(GL_SGIS_generate_mipmap);
+        	DECLARE_EXT(GL_EXT_texture_mirror_clamp);
+#       undef DECLARE_EXT_GL3
+#       undef DECLARE_EXT_GL2
+#       undef DECLARE_EXT
+
+        // Some extensions have aliases
+         _supports_GL_EXT_texture_cube_map = _supports_GL_EXT_texture_cube_map || supports("GL_ARB_texture_cube_map");
+         _supports_GL_EXT_texture_edge_clamp = _supports_GL_EXT_texture_edge_clamp || supports("GL_SGIS_texture_edge_clamp");
+
+
+        // Verify that multitexture loaded correctly
+        if (supports_GL_ARB_multitexture() &&
+            ((glActiveTextureARB == NULL) ||
+            (glMultiTexCoord4fvARB == NULL))) {
+            _supports_GL_ARB_multitexture = false;
+            #ifdef G3D_WIN32
+                *((void**)&glActiveTextureARB) = (void*)glIgnore;
+            #endif
+        }
+
+        _supports_GL_EXT_texture_rectangle =_supports_GL_EXT_texture_rectangle || supports("GL_NV_texture_rectangle");
+
+        // GL_ARB_texture_cube_map doesn't work on Radeon Mobility
+        // GL Renderer:    MOBILITY RADEON 9000 DDR x86/SSE2
+        // GL Version:     1.3.4204 WinXP Release
+        // Driver version: 6.14.10.6430
+
+        // GL Vendor:      ATI Technologies Inc.
+        // GL Renderer:    MOBILITY RADEON 7500 DDR x86/SSE2
+        // GL Version:     1.3.3842 WinXP Release
+        // Driver version: 6.14.10.6371
+
+        if ((beginsWith(renderer(), "MOBILITY RADEON") || beginsWith(renderer(), "ATI MOBILITY RADEON")) &&
+            beginsWith(driverVersion(), "6.14.10.6")) {
+            logPrintf("WARNING: This ATI Radeon Mobility card has a known bug with cube maps.\n"
+                      "   Put cube map texture coordinates in the normals and use ARB_NORMAL_MAP to work around.\n\n");
+        }
+    }
+
+    if (GLCaps::supports_GL_ARB_multitexture()) {
+        m_numTextureUnits = glGetInteger(GL_MAX_TEXTURE_UNITS_ARB);
+    } else {
+        m_numTextureUnits = 1;
+    }
+
+    // NVIDIA cards with GL_NV_fragment_program have different 
+    // numbers of texture coords, units, and textures
+    m_numTextureCoords = glGetInteger(GL_MAX_TEXTURE_COORDS_ARB);
+    m_numTextures = glGetInteger(GL_MAX_TEXTURE_IMAGE_UNITS_ARB);
+
+    if (! GLCaps::supports_GL_ARB_multitexture()) {
+        // No multitexture
+        if (debugLog) {
+            debugLog->println("No GL_ARB_multitexture support: "
+                              "forcing number of texture units "
+                              "to no more than 1");
+        }
+        m_numTextureCoords = iMax(1, m_numTextureCoords);
+        m_numTextures      = iMax(1, m_numTextures);
+        m_numTextureUnits  = iMax(1, m_numTextureUnits);
+    }
+    debugAssertGLOk();
+
+    m_maxTextureSize = glGetInteger(GL_MAX_TEXTURE_SIZE);
+    m_maxCubeMapSize = glGetInteger(GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT);
+    count++;
+    m_initialized = true;
+}
+
+
+void GLCaps::checkAllBugs() {
+    if (m_checkedForBugs) {
+        return;
+    } else {
+        m_checkedForBugs = true;
+    }
+
+    alwaysAssertM(m_loadedExtensions, "Cannot check for OpenGL bugs before extensions are loaded.");
+    debugAssertGLOk();
+
+    checkBug_cubeMapBugs();
+    checkBug_redBlueMipmapSwap();
+    checkBug_mipmapGeneration();
+    checkBug_slowVBO();
+}
+
+
+bool GLCaps::hasBug_glMultiTexCoord3fvARB() {
+    alwaysAssertM(m_initialized, "GLCaps has not been initialized.");
+    return bug_glMultiTexCoord3fvARB;
+}
+
+bool GLCaps::hasBug_normalMapTexGen() {
+    alwaysAssertM(m_initialized, "GLCaps has not been initialized.");
+    return bug_normalMapTexGen;
+}
+
+
+bool GLCaps::hasBug_redBlueMipmapSwap() {
+  std::cout << "count " << count << std::endl;
+    alwaysAssertM(m_initialized, "GLCaps has not been initialized.");
+    return bug_redBlueMipmapSwap;
+}
+
+
+bool GLCaps::hasBug_mipmapGeneration() {
+    alwaysAssertM(m_initialized, "GLCaps has not been initialized.");
+    return bug_mipmapGeneration;
+}
+
+
+bool GLCaps::hasBug_slowVBO() {
+    alwaysAssertM(m_initialized, "GLCaps has not been initialized.");
+    return bug_slowVBO;
+}
+
+
+bool GLCaps::supports(const std::string& extension) {
+    return extensionSet.contains(extension);
+}
+
+
+bool GLCaps::supports(const ImageFormat* fmt) {
+    return supportsTexture(fmt);
+}
+
+
+bool GLCaps::hasBug_R11G10B10F() {
+    // TODO: make a better test, actually trying to render to this format
+    return GLCaps::enumVendor() == ATI;
+}
+
+
+bool GLCaps::supportsTexture(const ImageFormat* fmt) {
+
+    if (fmt == ImageFormat::R11G11B10F() && hasBug_R11G10B10F()) {
+        return false;
+    }
+
+    // First, check if we've already tested this format
+    if (! _supportedImageFormat().containsKey(fmt)) {
+
+        bool supportsFormat = false;
+
+        if (fmt->floatingPoint && ! supports_GL_ARB_texture_float()) {
+            supportsFormat = false;
+        } else {
+            glPushAttrib(GL_TEXTURE_BIT);
+            {
+                // Clear the error bit
+                glGetErrors();
+
+                // See if we can create a texture in this format
+                unsigned int id;
+                glGenTextures(1, &id);
+                glBindTexture(GL_TEXTURE_2D, id);
+
+                // Clear the old error flag
+                glGetErrors();
+                // 2D texture, level of detail 0 (normal), internal format, x size from image, y size from image, 
+                // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+                glTexImage2D(GL_TEXTURE_2D, 0, fmt->openGLFormat, 8, 8, 0, 
+                             fmt->openGLBaseFormat, GL_UNSIGNED_BYTE, NULL);
+
+                supportsFormat = (glGetError() == GL_NO_ERROR);
+
+                glBindTexture(GL_TEXTURE_2D, 0);
+                glDeleteTextures(1, &id);
+            }
+            // Restore old texture state
+            glPopAttrib();
+        }
+
+        _supportedImageFormat().set(fmt, supportsFormat);
+    }
+    glGetErrors();
+
+    return _supportedImageFormat()[fmt];
+}
+
+
+bool GLCaps::supportsRenderBuffer(const ImageFormat* fmt) {
+
+    // First, check if we've already tested this format
+    if (! _supportedRenderBufferFormat().containsKey(fmt)) {
+
+        bool supportsFormat = false;
+
+        if (! supports_GL_ARB_framebuffer_object()) {
+            // No frame buffers
+            supportsFormat = false;
+
+        } else if (fmt->floatingPoint && ! supports_GL_ARB_texture_float()) {
+            supportsFormat = false;
+        } else {
+            glPushAttrib(GL_COLOR_BUFFER_BIT);
+            {
+                // Clear the error bit
+                glGetErrors();
+
+                // See if we can create a render buffer in this format
+                unsigned int id;
+                glGenRenderbuffersEXT (1, &id);
+
+                // Clear the old error flag
+                glGetErrors();
+
+                glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, id);
+                glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, fmt->openGLFormat, 8, 8);
+
+                supportsFormat = (glGetError() == GL_NO_ERROR);
+
+                glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, 0);
+                glDeleteRenderbuffersEXT(1, &id);
+            }
+            // Restore old  state
+            glPopAttrib();
+        }
+
+        glGetErrors();
+        _supportedRenderBufferFormat().set(fmt, supportsFormat);
+    }
+
+    return _supportedRenderBufferFormat()[fmt];
+}
+
+
+const std::string& GLCaps::glVersion() {
+    alwaysAssertM(m_loadedExtensions, "Cannot call GLCaps::glVersion before GLCaps::init().");
+    static std::string _glVersion = (char*)glGetString(GL_VERSION);
+    return _glVersion;
+}
+
+
+const std::string& GLCaps::driverVersion() {
+    alwaysAssertM(m_loadedExtensions, "Cannot call GLCaps::driverVersion before GLCaps::init().");
+    static std::string _driverVersion = getDriverVersion().c_str();
+	return _driverVersion;
+}
+
+
+const std::string& GLCaps::vendor() {
+    alwaysAssertM(m_loadedExtensions, "Cannot call GLCaps::vendor before GLCaps::init().");
+    const static std::string _driverVendor = 
+
+        // For debuging, force a specific vendor:
+        //"ATI Technologies Inc.";
+        //"NVIDIA Corporation";
+        
+
+        (char*)glGetString(GL_VENDOR);
+
+
+
+    return _driverVendor;
+}
+
+
+const std::string& GLCaps::renderer() {
+    alwaysAssertM(m_loadedExtensions, "Cannot call GLCaps::renderer before GLCaps::init().");
+    static std::string _glRenderer = (char*)glGetString(GL_RENDERER);
+	return _glRenderer;
+}
+
+ 
+bool GLCaps::supports_two_sided_stencil() {
+    return 
+        GLCaps::supports_GL_ATI_separate_stencil() ||
+        GLCaps::supports_GL_EXT_stencil_two_side();
+}
+
+
+void GLCaps::checkBug_cubeMapBugs() {
+    bool hasCubeMap = (strstr((char*)glGetString(GL_EXTENSIONS), "GL_EXT_texture_cube_map") != NULL) ||
+                      (strstr((char*)glGetString(GL_EXTENSIONS), "GL_ARB_texture_cube_map") != NULL);
+
+    if (! hasCubeMap) {
+        bug_glMultiTexCoord3fvARB = false;
+        bug_normalMapTexGen = false;
+        // No cube map == no bug.
+        return;
+    }
+
+    // Save current GL state
+    unsigned int id;
+    glGenTextures(1, &id);
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    {
+        debugAssertGLOk();
+
+        glDrawBuffer(GL_BACK);
+        glReadBuffer(GL_BACK);
+        glClearColor(0,1,1,1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glDisable(GL_DEPTH_TEST);
+
+        GLenum target[] = {
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB,
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB,
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB};
+
+
+        // Face colors
+        unsigned char color[6];
+
+        // Create a cube map
+        glActiveTextureARB(GL_TEXTURE0_ARB);
+        glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, id);
+        glEnable(GL_TEXTURE_CUBE_MAP_ARB);
+    
+        {
+            const int N = 16;
+            unsigned int image[N * N];
+            debugAssertGLOk();
+            for (int f = 0; f < 6; ++f) {
+
+                color[f] = f * 40;
+
+                // Fill each face with a different color
+                memset(image, color[f], N * N * sizeof(unsigned int));
+
+                debugAssertGLOk();
+                // 2D texture, level of detail 0 (normal), internal
+                // format, x size from image, y size from image,
+                // border 0 (normal), rgb color data, unsigned byte
+                // data, and finally the data itself.
+                glTexImage2D(target[f], 0, GL_RGBA, N, N, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+                debugAssertGLOk();
+            }
+
+            glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+            glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_R, GL_CLAMP);
+        }
+    
+
+        // Set orthogonal projection
+        float viewport[4];
+        glGetFloatv(GL_VIEWPORT, viewport);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(viewport[0], viewport[0] + viewport[2], viewport[1] + viewport[3], viewport[1], -1, 10);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        glActiveTextureARB(GL_TEXTURE0_ARB + 0);
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
+
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_GEN_R);
+
+        // Render one sample from each cube map face
+        glDisable(GL_LIGHTING);
+        glDisable(GL_CULL_FACE);
+        glColor3f(1, 1, 1);
+
+        static const float corner[] = {
+            1.000000, -1.000000, 1.000000,
+            1.000000, -1.000000, -1.000000,
+            1.000000, 1.000000, -1.000000,
+            1.000000, 1.000000, 1.000000,
+
+            -1.000000, 1.000000, 1.000000,
+            -1.000000, 1.000000, -1.000000,
+            -1.000000, -1.000000, -1.000000,
+            -1.000000, -1.000000, 1.000000,
+
+            1.000000, 1.000000, 1.000000,
+            1.000000, 1.000000, -1.000000,
+            -1.000000, 1.000000, -1.000000,
+            -1.000000, 1.000000, 1.000000,
+
+            1.000000, -1.000000, 1.000000,
+            -1.000000, -1.000000, 1.000000,
+            -1.000000, -1.000000, -1.000000,
+            1.000000, -1.000000, -1.000000,
+
+            -1.000000, -1.000000, 1.000000,
+            1.000000, -1.000000, 1.000000,
+            1.000000, 1.000000, 1.000000,
+            -1.000000, 1.000000, 1.000000,
+
+            -1.000000, 1.000000, -1.000000,
+            1.000000, 1.000000, -1.000000,
+            1.000000, -1.000000, -1.000000,
+            -1.000000, -1.000000, -1.000000};
+
+        for (int i = 0; i < 2; ++i) {
+            // First time through, use multitex coord
+            if (i == 1) {
+                // Second time through, use normal map generation
+                glActiveTextureARB(GL_TEXTURE0_ARB + 0);
+                glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
+                glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
+                glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
+                glEnable(GL_TEXTURE_GEN_S);
+                glEnable(GL_TEXTURE_GEN_T);
+                glEnable(GL_TEXTURE_GEN_R);
+            }
+
+            glBegin(GL_QUADS);
+
+                for (int f = 0; f < 6; ++f) {
+                    const float s = 10.0f;
+
+                    glMultiTexCoord3fvARB(GL_TEXTURE0_ARB, corner + 12 * f + 0);
+                    glNormal3fv(corner + 12 * f + 0);
+                    glVertex4f(f * s, 0, -1, 1);
+
+                    glMultiTexCoord3fvARB(GL_TEXTURE0_ARB, corner + 12 * f + 3);
+                    glNormal3fv(corner + 12 * f + 3);
+                    glVertex4f(f * s, s, -1, 1);
+
+                    glMultiTexCoord3fvARB(GL_TEXTURE0_ARB, corner + 12 * f + 6);
+                    glNormal3fv(corner + 12 * f + 6);
+                    glVertex4f((f + 1) * s, s, -1, 1);
+
+                    glMultiTexCoord3fvARB(GL_TEXTURE0_ARB, corner + 12 * f + 9);
+                    glNormal3fv(corner + 12 * f + 9);
+                    glVertex4f((f + 1) * s, 0, -1, 1);
+                }
+            glEnd();
+
+            // Read back results
+            unsigned int readback[60];
+            glReadPixels(0, (int)(viewport[3] - 5), 60, 1, GL_RGBA, GL_UNSIGNED_BYTE, readback);
+
+            // Test result for errors
+            bool texbug = false;
+            for (int f = 0; f < 6; ++f) {
+                if ((readback[f * 10 + 5] & 0xFF) != color[f]) {
+                    texbug = true;
+                    break;
+                }
+            }
+
+            if (i == 0) {
+                bug_glMultiTexCoord3fvARB = texbug;
+            } else {
+                bug_normalMapTexGen = texbug;
+            }
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+    }
+    glPopAttrib();
+
+    glDeleteTextures(1, &id);
+}
+
+
+void GLCaps::checkBug_redBlueMipmapSwap() {
+    static bool hasAutoMipmap = false;
+    {
+        std::string ext = (char*)glGetString(GL_EXTENSIONS);
+        hasAutoMipmap = (ext.find("GL_SGIS_generate_mipmap") != std::string::npos);
+    }
+
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    GLuint id;
+    glGenTextures(1, &id);
+
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    if (hasAutoMipmap) {
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+    }
+
+    int N = 4 * 4 * 3;
+    uint8* bytes = new uint8[N];
+
+    memset(bytes, 0, 4*4*3);
+    for (int i = 0; i < N; i += 3) {
+        bytes[i] = 0xFF;
+    }
+
+    // 2D texture, level of detail 0 (normal), internal format, x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 4, 4, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
+
+    // Read the data back.
+    glGetTexImage(GL_TEXTURE_2D,
+			      0,
+			      GL_RGB,
+			      GL_UNSIGNED_BYTE,
+			      bytes);
+
+    // Verify that the data made the round trip correctly
+    bug_redBlueMipmapSwap = 
+        (bytes[0] != 0xFF) ||
+        (bytes[1] != 0x00) ||
+        (bytes[2] != 0x00);
+
+    delete[] bytes;
+
+    // Draw to the screen.
+
+    glDeleteTextures(1, &id);
+    glPopAttrib();
+}
+
+void GLCaps::checkBug_mipmapGeneration() {
+    const std::string& r = renderer();
+
+	// The mip-maps are arbitrarily corrupted; we have not yet generated
+	// a reliable test for this case.
+
+    bug_mipmapGeneration = 
+        GLCaps::supports("GL_SGIS_generate_mipmap") &&
+		(beginsWith(r, "MOBILITY RADEON 90") ||
+		    beginsWith(r, "MOBILITY RADEON 57") ||
+		    beginsWith(r, "Intel 845G") ||
+		    beginsWith(r, "Intel 854G"));
+}
+
+
+void GLCaps::checkBug_slowVBO() {
+    bool hasVBO = 
+        (strstr((char*)glGetString(GL_EXTENSIONS), "GL_ARB_vertex_buffer_object") != NULL) &&
+            (glGenBuffersARB != NULL) && 
+            (glBufferDataARB != NULL) &&
+            (glDeleteBuffersARB != NULL);
+
+    if (! hasVBO) {
+		// Don't have VBO; don't have a bug!
+        bug_slowVBO = false;
+        return;
+    }
+
+	const std::string& r = renderer();
+
+    bug_slowVBO = beginsWith(r, "MOBILITY RADEON 7500");
+	return;
+
+    // TODO: Make a real test for this case
+}
+
+void describeSystem(
+    class RenderDevice*  rd, 
+    class NetworkDevice* nd, 
+    TextOutput& t) {
+
+    System::describeSystem(t);
+    rd->describeSystem(t);
+    nd->describeSystem(t);
+}
+
+
+void describeSystem(
+    class RenderDevice*  rd, 
+    class NetworkDevice* nd, 
+    std::string&        s) {
+    
+    TextOutput t;
+    describeSystem(rd, nd, t);
+    t.commitString(s);
+}
+
+
+const class ImageFormat* GLCaps::firstSupportedTexture(const Array<const class ImageFormat*>& prefs) {
+    for (int i = 0; i < prefs.size(); ++i) {
+        if (supportsTexture(prefs[i])) {
+            return prefs[i];
+        }
+    }
+
+    return NULL;
+}
+
+
+bool GLCaps::supportsG3D9(std::string& explanation) {
+    bool supported = false;
+    
+    int major = 1;
+    int minor = 0;
+    sscanf((const char*)glGetString(GL_VERSION), "%d.%d", &major, &minor);
+
+    int smajor = 1;
+    int sminor = 0;
+
+	bool hasGLSL330 = false;
+    // Remove all pending errors
+    while (glGetError() != GL_NONE);
+    
+    if (glGetString(GL_SHADING_LANGUAGE_VERSION) && (glGetError() != GL_NONE)) { 
+		sscanf((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION), "%d.%d", &smajor, &sminor);
+		hasGLSL330 = ((smajor > 3) || (smajor == 3 && sminor >= 30));
+	}
+    // Remove all errors generated by glGetString
+    while (glGetError() != GL_NONE);
+    debugAssertGLOk();
+
+	supported = supported && hasGLSL330;
+    explanation += format("GLSL version 3.30                   %s (GLSL version on this driver is %d.%d)\n",
+                          hasGLSL330 ? "yes" : "NO", smajor, sminor);
+
+    if (major > 3 || (major == 3 && minor >= 3)) {
+        supported = true;
+        explanation += format("GPU Supports OpenGL 3.3 or later  (OpenGL version on this driver is %d.%d)\n", major, minor);
+    } else {
+        explanation += format("                                   OpenGL version on this driver is %d.%d\n", major, minor);
+#       define REQUIRE(ext, alt) \
+        { bool has = supports(ext) || supports(alt);\
+            explanation += format("%33s  %s\n", ext, (has ? " yes " : " NO - Required for G3D 9.0!"));\
+            supported = supported && has; \
+        }
+#       define RECOMMEND(ext, alt) \
+        { bool has = supports(ext) || supports(alt);\
+            explanation += format("%33s  %s\n", ext, (has ? "(yes)" : "(NO - Recommended but not required.)"));\
+        }
+
+        // This is an older OpenGL, but we can support it through extensions
+        REQUIRE("GL_EXT_stencil_two_side", "");
+        REQUIRE("GL_ARB_depth_clamp", "GL_NV_depth_clamp");
+        REQUIRE("GL_ARB_texture_non_power_of_two", "");
+        REQUIRE("GL_ARB_texture_float", "");
+        REQUIRE("GL_ARB_geometry_shader4", "GL_EXT_geometry_shader4");
+        REQUIRE("GL_ARB_sync", "");
+        REQUIRE("GL_ARB_draw_buffers_blend", "");
+#       ifdef G3D_WIN32
+            if (wglGetProcAddress("wglCreateContextAttribsARB") == NULL) {
+                REQUIRE("WGL_ARB_create_context", "");
+            }
+#       else
+            REQUIRE("GLX_ARB_create_context", "");
+#       endif
+        REQUIRE("GL_ARB_vertex_array_object", "GL_APPLE_vertex_array_object");
+        REQUIRE("GL_ARB_instanced_arrays", "");
+
+        REQUIRE("GL_ARB_shader_objects", "");
+        REQUIRE("GL_ARB_shading_language_100", "");
+        REQUIRE("GL_ARB_map_buffer_range", "");
+
+        REQUIRE("GL_EXT_texture_integer", "");
+        REQUIRE("GL_ARB_texture_rg", "");
+    }
+   
+    RECOMMEND("GL_ARB_seamless_cube_map", "");
+    REQUIRE("GL_ARB_sample_shading", "");
+
+
+    return supported;
+}
+}
+

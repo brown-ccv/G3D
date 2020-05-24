@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\vrg3d-code\G3D\png.lib\build\CMakeFiles\21a0ede3163ea986ee66f17eb5f4db17\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{63DE2215-5011-3B42-84A3-7C2E4AC61A01}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

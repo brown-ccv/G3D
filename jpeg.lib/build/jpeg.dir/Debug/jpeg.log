@@ -1,0 +1,78 @@
+﻿  Building Custom Rule F:/vrg3d-code/G3D/jpeg.lib/CMakeLists.txt
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27038 for x64
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /I"F:\vrg3d-code\G3D\jpeg.lib\.\include" /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"jpeg.dir\Debug\\" /Fd"jpeg.dir\Debug\jpeg.pdb" /Gd /TC /errorReport:prompt "F:\vrg3d-code\G3D\jpeg.lib\source\jcapimin.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcapistd.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jccoefct.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jccolor.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcdctmgr.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jchuff.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcinit.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcmainct.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcmarker.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcmaster.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcomapi.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcparam.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcphuff.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcprepct.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jcsample.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jctrans.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdapimin.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdapistd.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdatadst.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdatasrc.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdcoefct.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdcolor.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jddctmgr.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdhuff.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdinput.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdmainct.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdmarker.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdmaster.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdmerge.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdphuff.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdpostct.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdsample.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jdtrans.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jerror.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jfdctflt.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jfdctfst.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jfdctint.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jidctflt.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jidctfst.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jidctint.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jidctred.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jmemansi.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jquant1.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jquant2.c" "F:\vrg3d-code\G3D\jpeg.lib\source\jutils.c"
+  
+  jcapimin.c
+  jcapistd.c
+  jccoefct.c
+  jccolor.c
+  jcdctmgr.c
+  jchuff.c
+  jcinit.c
+  jcmainct.c
+  jcmarker.c
+  jcmaster.c
+  jcomapi.c
+  jcparam.c
+  jcphuff.c
+  jcprepct.c
+  jcsample.c
+  jctrans.c
+  jdapimin.c
+  jdapistd.c
+  jdatadst.c
+  jdatasrc.c
+  Generating Code...
+  Compiling...
+  jdcoefct.c
+  jdcolor.c
+  jddctmgr.c
+  jdhuff.c
+  jdinput.c
+  jdmainct.c
+  jdmarker.c
+  jdmaster.c
+  jdmerge.c
+  jdphuff.c
+  jdpostct.c
+  jdsample.c
+  jdtrans.c
+  jerror.c
+F:\vrg3d-code\G3D\jpeg.lib\source\jerror.c(193): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): note: see declaration of 'sprintf'
+F:\vrg3d-code\G3D\jpeg.lib\source\jerror.c(195): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): note: see declaration of 'sprintf'
+  jfdctflt.c
+  jfdctfst.c
+  jfdctint.c
+  jidctflt.c
+  jidctfst.c
+  jidctint.c
+  Generating Code...
+  Compiling...
+  jidctred.c
+  jmemansi.c
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemansi.c(104): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemansi.c(158): warning C4090: 'function': different 'const' qualifiers
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemansi.c(157): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(338): note: see declaration of 'strncpy'
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemansi.c(159): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(208): note: see declaration of 'fopen'
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemansi.c(160): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(338): note: see declaration of 'strncpy'
+  jmemmgr.c
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c(306): warning C4267: '+=': conversion from 'size_t' to 'long', possible loss of data
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c(366): warning C4267: '+=': conversion from 'size_t' to 'long', possible loss of data
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c(976): warning C4267: '-=': conversion from 'size_t' to 'long', possible loss of data
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c(990): warning C4267: '-=': conversion from 'size_t' to 'long', possible loss of data
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c(1106): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdlib.h(1191): note: see declaration of 'getenv'
+F:\vrg3d-code\G3D\jpeg.lib\source\jmemmgr.c(1109): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(2263): note: see declaration of 'sscanf'
+  jquant1.c
+  jquant2.c
+  jutils.c
+  Generating Code...
+  jpeg.vcxproj -> F:\vrg3d-code\G3D\jpeg.lib\build\Debug\jpeg.lib

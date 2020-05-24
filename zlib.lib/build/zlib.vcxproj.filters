@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\adler32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\compress.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\crc32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\deflate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\gzclose.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\gzlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\gzread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\gzwrite.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\infback.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\inffast.c">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\inflate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\inftrees.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\trees.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\uncompr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\vrg3d-code\G3D\zlib.lib\source\zutil.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\deflate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\gzguts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\inffixed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\inflate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\inftrees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\trees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\source\zutil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\include\zconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\vrg3d-code\G3D\zlib.lib\include\zlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\vrg3d-code\G3D\zlib.lib\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7966C7BB-8F11-315F-A915-BC97977172F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C1F36FA7-6E8E-350F-ACE2-08C08CD5074D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

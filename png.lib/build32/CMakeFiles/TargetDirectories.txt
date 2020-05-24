@@ -1,0 +1,4 @@
+F:/vrg3d-code/G3D/png.lib/build32/CMakeFiles/png.dir
+F:/vrg3d-code/G3D/png.lib/build32/CMakeFiles/INSTALL.dir
+F:/vrg3d-code/G3D/png.lib/build32/CMakeFiles/ALL_BUILD.dir
+F:/vrg3d-code/G3D/png.lib/build32/CMakeFiles/ZERO_CHECK.dir

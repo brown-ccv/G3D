@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\vrg3d-code\G3D\jpeg.lib\build32\CMakeFiles\1302e507951e8d79b3cad179ac75172c\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{67BDF23A-5961-3D90-843B-DB2464BEFD72}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
