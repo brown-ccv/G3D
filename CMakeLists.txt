@@ -2,11 +2,12 @@ cmake_minimum_required (VERSION 2.6)
 project (G3D)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
-if(DEFINED ENV{CMAKE_INSTALL_PREFIX})
-	set(CMAKE_INSTALL_PREFIX $ENV{CMAKE_INSTALL_PREFIX})
-else()
-	set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/../G3D-8.0)
-endif()
+
+#if(DEFINED ENV{CMAKE_INSTALL_PREFIX})
+#	set(CMAKE_INSTALL_PREFIX $ENV{CMAKE_INSTALL_PREFIX})
+#else()
+#	set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/../G3D)
+#endif()
 
 set (CMAKE_VERBOSE_MAKEFILE TRUE)
 
@@ -49,26 +50,11 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   add_definitions(-DUNICODE -D_UNICODE)
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
-#create the output directories and set the cmake generated projects to build to them rather than a Debug or Release directory or individual project directories.
-set (OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
-make_directory(${OUTPUT_LIBDIR})
 
-if (CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION GREATER 7)
-  set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR})
-  set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR})
-  set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR})
-  foreach (CONF ${CMAKE_CONFIGURATION_TYPES})
-	string (TOUPPER ${CONF} CONF)
-	set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF} ${OUTPUT_LIBDIR})
-	set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF} ${OUTPUT_LIBDIR})
-	set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF} ${OUTPUT_LIBDIR})
-  endforeach(CONF CMAKE_CONFIGURATION_TYPES)
-else()
-  set(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
-endif()
-
+list(APPEND targets_to_install G3D GLG3D)
 find_package(JPEG QUIET)
 if (NOT JPEG_FOUND)
+  list(APPEND targets_to_install jpeg)
   add_subdirectory (jpeg.lib)
 endif()
 
@@ -76,21 +62,25 @@ add_subdirectory (mongoose.lib)
 
 find_package(PNG QUIET)
 if (NOT PNG_FOUND)
+  list(APPEND targets_to_install png)
   add_subdirectory (png.lib)
 endif()
 
 find_package(TIFF QUIET)
 if (NOT TIFF_FOUND)
+  list(APPEND targets_to_install tiff)
   add_subdirectory (tiff.lib)
 endif()
 
 find_package(libzip QUIET)
 if (NOT LIBZIP_FOUND)
+  list(APPEND targets_to_install zip)
   add_subdirectory (zip.lib)
 endif()
 
 find_package(ZLIB QUIET)
 if (NOT ZLIB_FOUND)
+  list(APPEND targets_to_install zlib)
   add_subdirectory (zlib.lib)
 endif()
 
@@ -128,4 +118,8 @@ endif()
 add_subdirectory (G3D.lib)
 add_subdirectory (GLG3D.lib)
 
-install(DIRECTORY ${OUTPUT_LIBDIR}/ DESTINATION lib)
+INSTALL(TARGETS ${targets_to_install}
+   ARCHIVE DESTINATION lib
+   LIBRARY DESTINATION lib
+   RUNTIME DESTINATION bin
+   )
