@@ -457,7 +457,7 @@ bool GLCaps::hasBug_normalMapTexGen() {
 
 
 bool GLCaps::hasBug_redBlueMipmapSwap() {
-  std::cout << "count " << count << std::endl;
+  
     alwaysAssertM(m_initialized, "GLCaps has not been initialized.");
     return bug_redBlueMipmapSwap;
 }
